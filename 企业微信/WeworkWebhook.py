@@ -16,6 +16,8 @@ import html
 from django.template import Context, Template
 
 ###########公共参数##############################################
+# 兜底机器人key, 监控项未配置则使用该配置项
+webhook_key = ""
 # 单条最大消息大小
 max_message_size = 2048
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
@@ -38,8 +40,8 @@ META = {
     "configs": [
         {
             "name": "WebHhookKey",
-            "alias": u"机器人Key, 只允许填写一个",
-            "presence": True,
+            "alias": u"(可选)自定义机器人Key",
+            "presence": False,
             "value_type": "string",
             "default_value": "",
             "style": {
@@ -216,9 +218,13 @@ def handle(params, alert):
         "low": "低",
         "info": "信息"
     }
-    send_key = params.get('configs')[0].get('value')
+    send_key = params.get('configs')[0].get('value') if params.get('configs')[0].get('value') else webhook_key
     mobiles = params.get('configs')[1].get('value').strip(',').split(',')
     logger.info("mobiles:{}".format(mobiles))
+    if not send_key:
+        log_and_reply(logging.WARNING, "webhook key未配置, 不允许发送告警")
+        return
+
     iskeyValidate = validate_data_format(send_key)
     if iskeyValidate:
         extendData = ""

@@ -19,6 +19,10 @@ import html
 from django.template import Context, Template
 
 ###########公共参数##############################################
+# 兜底机器人token，监控项未配置则使用该配置项
+webhook_access_token = ""
+# (可选)兜底机器人加签密钥，监控项未配置则使用该配置项
+webhook_secret = ""
 # 单条最大消息大小
 max_message_size = 2048
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
@@ -41,8 +45,8 @@ META = {
     "configs": [
         {
             "name": "Access_token",
-            "alias": "access_token",
-            "presence": True,
+            "alias": "(可选)自定义机器人AccessToken",
+            "presence": False,
             "value_type": "string",
             "default_value": "",
             "style": {
@@ -63,6 +67,7 @@ META = {
         },{
             "name": "Phones",
             "alias": u"(可选)接收人手机号, 用以@",
+            "presence": False,
             "value_type": "string",
             "default_value": "",
             "input_type": "phone",
@@ -234,10 +239,13 @@ def handle(params, alert):
         "low": "低",
         "info": "信息"
     }
-    access_token = params.get('configs')[0].get('value')
-    secret = params.get('configs')[1].get('value')
+    access_token = params.get('configs')[0].get('value') if params.get('configs')[0].get('value') else webhook_access_token
+    secret = params.get('configs')[1].get('value') if params.get('configs')[1].get('value') else webhook_secret
     phones = params.get('configs')[2].get('value').strip(',').split(',')
 
+    if not access_token:
+        log_and_reply(logging.WARNING, "access_token未配置, 不允许发送告警")
+        return
     extendData = ""
     is_alert_recovery = alert["is_alert_recovery"]
     if is_alert_recovery:
