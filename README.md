@@ -44,15 +44,19 @@ proxies = {
 
 ## 1.3. 插件类型
 
-以日志易为维度大致有2类插件：
+以日志易为维度大致有3类插件：
 
-1. 业务插件
+1. Yottaweb插件
 
    用以推送实际业务监控告警
 
 2. manager插件
 
    用以推送日志易平台自身的监控
+
+3. Soar插件
+
+   可以在【执行脚本】算子引用
 
 
 
@@ -66,7 +70,7 @@ proxies = {
 
 ## 1.4. 使用说明
 
-### 1.4.1. 业务插件
+### 1.4.1. Yottaweb插件
 
 1. 进去【监控】页面，在【其他】-->【告警插件】页面进行上传即可
 
@@ -78,7 +82,7 @@ proxies = {
 
    ![image-20240411114411283](https://s3.yaourt.cn/img/windows/2024/04/11/image-20240411114411283.png)
 
-3. 具体的参数填写说明请查阅具体章节
+3. 具体的参数填写说明请查阅相关章节
 
 ### 1.4.2. Manager插件
 
@@ -94,19 +98,55 @@ proxies = {
 
    ![image-20240411114621720](https://s3.yaourt.cn/img/windows/2024/04/11/image-20240411114621720.png)
 
-3. 具体的参数填写说明请查阅具体章节
+3. 具体的参数填写说明请查阅相关章节
+
+### 1.4.3. Soar插件
+
+1. 将脚本传到soar节点的任意路径
+
+2. soar剧本添加一个【字段操作组件】算子，获取必要的威胁字段
+
+   | 字段名称   | 描述     |
+   | ---------- | -------- |
+   | srcAddr    | 来源IP   |
+   | dstAddr    | 目标IP   |
+   | threatName | 告警名称 |
+   | threatDesc | 告警描述 |
+
+   ![image-20240424100926442](https://s3.yaourt.cn/img/windows/2024/04/24/202404241009607.png)
+
+3. 在合适的位置添加【执行脚本】算子，配置使用的shell脚本语言，一下是参考样例
+
+   ```shell
+   # 获取告警描述
+   threatDesc=`GetJsonFieldValue kv_json .threat_data[0].srcAddr`
+   # 获取告警名称
+   threatName=`GetJsonFieldValue kv_json .threat_data[0].srcAddr`
+   # 保存字段变量
+   SaveFieldValue threatDesc $threatDesc
+   SaveFieldValue threatName $threatName
+   
+   # 执行脚本并将返回结果存放于info变量，变量以实际脚本要求为准
+   info=`/opt/rizhiyi/python/bin/python /data/rizhiyi/soar/script/WeworkApplicationSoar.py --alert_name '$threatName' --alert_msg '$data' --mobiles 11111111111`
+   ```
+4. 具体的脚本参数填写说明请查阅相关章节
+   
 
 ## 1.5. 日志路径
 
-1. 业务插件
+1. Yottaweb插件
 
    运行所产生的日志统一存放在cruxee机器的/data/rizhiyi/logs/cruxee/plugins路径，文件名以上传显示的名称一致，如下
 
    ![image-20240411151240837](https://s3.yaourt.cn/img/windows/2024/04/11/image-20240411151240837.png)
 
-2. manager插件
+2. Manager插件
 
    运行所产生的日志存放于: /data/rizhiyi/logs/plugin.log
+
+3. Soar插件
+
+   运行所产生的日志存放于soar节点机器: /data/rizhiyi/logs/soar/
 
 # 2. 企业微信
 
@@ -136,7 +176,7 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ### 2.1.4. 插件使用
 
-#### 2.1.4.1. 业务插件
+#### 2.1.4.1. Yottaweb插件
 
 1. 使用编辑器打开脚本，根据2.1.3章节获取到的相关信息填入脚本，webhook_key参数仅用于当监控项中未配置key时则采用该参数进行推送，属于兜底策略
 
@@ -173,6 +213,31 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
    ![image-20240411154954405](https://s3.yaourt.cn/img/windows/2024/04/11/image-20240411154954405.png)
 
    ![image-20240411155133000](https://s3.yaourt.cn/img/windows/2024/04/11/image-20240411155133000.png)
+
+#### 2.1.4.3. Soar插件
+
+1. 使用编辑器打开脚本，根据2.1.3章节获取到的相关信息填入脚本，webhook_key参数仅用于当监控项中未配置key时则采用该参数进行推送，属于兜底策略
+
+   ![image-20240424102041287](https://s3.yaourt.cn/img/windows/2024/04/24/202404241020390.png)
+
+2. 按照1.4.3章节上传并配置算子
+
+3. 脚本执行说明
+
+   以下是脚本使用样例
+
+   ```
+   /opt/rizhiyi/python/bin/python /data/rizhiyi/soar/python/WeworkWebhookSoar.py --alert_name '告警测试' --alert_msg '测试' --mobiles 1111111,222222 --key xxxxxxxxxxxxxx
+   ```
+
+   详细参数说明如下
+
+   | 参数             | 说明                                                 |
+   | ---------------- | ---------------------------------------------------- |
+   | alert_name(必填) | 告警名称, 建议以单引号限定, 否则遇到空格会报错       |
+   | alert_msg(必填)  | 告警信息, 建议以单引号限定, 否则遇到空格会报错       |
+   | mobiles(选填)    | 手机号, 多手机以,(逗号)分割                          |
+   | key(选填)        | 机器人webhook key，与脚本参数webhook_key不能同时为空 |
 
 ## 2.2. 应用消息
 
@@ -232,7 +297,7 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ### 2.2.4. 插件使用
 
-#### 2.2.4.1. 业务插件
+#### 2.2.4.1. Yottaweb插件
 
 1. 使用编辑器打开脚本，根据2.2.3章节获取到的相关信息填入脚本
 
@@ -263,6 +328,29 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
    **PS：**注意多个接收人要以英文逗号(,)分割，否则无法推送成功
 
    ![image-20240416162405624](https://s3.yaourt.cn/img/windows/2024/04/16/202404161624727.png)
+
+#### 2.2.4.3. Soar插件
+
+1. 使用编辑器打开脚本，根据2.2.3章节获取到的相关信息填入脚本
+
+   ![image-20240424102711034](https://s3.yaourt.cn/img/windows/2024/04/24/202404241027139.png)
+
+2. 按照1.4.3章节上传并配置算子
+
+3. 脚本执行说明
+
+   以下是脚本使用样例
+
+   ```shell
+   /opt/rizhiyi/python/bin/python /data/rizhiyi/soar/python/WeworkApplicationSoar.py --alert_name '告警测试' --alert_msg '测试' --users_ids 1111111,222222 --mobiles 1111111,222222
+   ```
+
+   | 参数             | 说明                                                   |
+   | ---------------- | ------------------------------------------------------ |
+   | alert_name(必填) | 告警名称, 建议以单引号限定, 否则遇到空格会报错         |
+   | alert_msg(必填)  | 告警信息, 建议以单引号限定, 否则遇到空格会报错         |
+   | users_ids(选填)  | 用户ID, 多用户ID以,(逗号)分割, 与mobiles参数只能选一个 |
+   | mobiles(选填)    | 手机号, 多手机以,(逗号)分割, 与users_ids参数只能选一个 |
 
 # 3. 钉钉
 
@@ -322,7 +410,7 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ### 3.1.4. 插件使用
 
-#### 3.1.4.1. 业务插件
+#### 3.1.4.1. Yottaweb插件
 
 1. 使用编辑器打开脚本，根据3.1.3章节获取到的相关信息填入脚本，webhook_access_token以及webhook_secret参数仅用于当监控项中未配置时则采用该参数进行推送，属于兜底策略
 
@@ -360,6 +448,30 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ​	![image-20240416165744039](https://s3.yaourt.cn/img/windows/2024/04/16/202404161657157.png)
 
+#### 3.1.4.3. Soar插件
+
+1. 使用编辑器打开脚本，根据3.1.3章节获取到的相关信息填入脚本，webhook_access_token以及webhook_secret参数仅用于当监控项中未配置时则采用该参数进行推送，属于兜底策略
+
+   ![image-20240424103036983](https://s3.yaourt.cn/img/windows/2024/04/24/202404241030095.png)
+
+2. 按照1.4.3章节上传并配置算子
+
+3. 脚本执行说明
+
+   以下是脚本使用样例
+
+   ```shell
+   /opt/rizhiyi/python/bin/python /data/rizhiyi/soar/python/DingTalkWebhookSoar.py --alert_name '告警测试' --alert_msg '测试' --access_token xxxx --secret xxxx --mobiles 1111111,222222
+   ```
+
+   | 参数               | 说明                                                         |
+   | ------------------ | ------------------------------------------------------------ |
+   | alert_name(必填)   | 告警名称, 建议以单引号限定, 否则遇到空格会报错               |
+   | alert_msg(必填)    | 告警信息, 建议以单引号限定, 否则遇到空格会报错               |
+   | access_token(选填) | 自定义机器人AccessToken, 与脚本参数webhook_access_token不能同时为空 |
+   | secret(选填)       | 加签密钥, 如有加签, 与脚本参数webhook_secret不能同时为空     |
+   | mobiles(选填)      | 手机号, 多手机以,(逗号)分割                                  |
+
 ## 3.2. 工作通知
 
 ### 3.2.1. 效果
@@ -392,7 +504,7 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ### 3.2.4. 插件使用
 
-#### 3.2.4.1. 业务插件
+#### 3.2.4.1. Yottaweb插件
 
 1. 使用编辑器打开脚本，根据3.2.3章节获取到的相关信息填入脚本
 
@@ -417,6 +529,28 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
    **@指定接收人[手机号, 多个以,号分割]：**不可省略，必须填入接收人手机号
 
    ![image-20240416171547841](https://s3.yaourt.cn/img/windows/2024/04/16/202404161715972.png)
+
+#### 3.2.4.3. Soar插件
+
+1. 使用编辑器打开脚本，根据3.2.3章节获取到的相关信息填入脚本
+
+   ![image-20240424103314117](https://s3.yaourt.cn/img/windows/2024/04/24/202404241033222.png)
+
+2. 按照1.4.3章节上传并配置算子
+
+3. 脚本执行说明
+
+   以下是脚本使用样例
+
+   ```shell
+   /opt/rizhiyi/python/bin/python /data/rizhiyi/soar/python/DingTalkJobNoticeSoar.py --alert_name '告警测试' --alert_msg '测试' --mobiles 1111111,222222
+   ```
+
+   | 参数             | 说明                                           |
+   | ---------------- | ---------------------------------------------- |
+   | alert_name(必填) | 告警名称, 建议以单引号限定, 否则遇到空格会报错 |
+   | alert_msg(必填)  | 告警信息, 建议以单引号限定, 否则遇到空格会报错 |
+   | mobiles(选填)    | 手机号, 多手机以,(逗号)分割                    |
 
 # 4. 飞书
 
@@ -482,7 +616,7 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ### 4.1.4. 插件使用
 
-#### 4.1.4.1. 业务插件
+#### 4.1.4.1. Yottaweb插件
 
 1. 使用编辑器打开脚本，根据4.1.3章节获取到的相关信息填入脚本，webhook_token以及webhook_secret参数仅用于当监控项中未配置时则采用该参数进行推送，属于兜底策略
 
@@ -512,6 +646,29 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 3. 最后根据1.4.2章节针对相关告警规则进行绑定推送渠道即可，无需其他配置
 
+#### 4.1.4.3. Soar插件
+
+1. 使用编辑器打开脚本，根据4.1.3章节获取到的相关信息填入脚本，webhook_token以及webhook_secret参数仅用于当监控项中未配置时则采用该参数进行推送，属于兜底策略
+
+   ![image-20240424103841884](https://s3.yaourt.cn/img/windows/2024/04/24/202404241038000.png)
+
+2. 按照1.4.3章节上传并配置算子
+
+3. 脚本执行说明
+
+   以下是脚本使用样例
+
+   ```shell
+   /opt/rizhiyi/python/bin/python /data/rizhiyi/soar/python/FeishuWebhookSoar.py --alert_name '告警测试' --alert_msg '测试' --webhoook_token xxxx --sign_secret xxxx
+   ```
+
+   | 参数                 | 说明                                                         |
+   | -------------------- | ------------------------------------------------------------ |
+   | alert_name(必填)     | 告警名称, 建议以单引号限定, 否则遇到空格会报错               |
+   | alert_msg(必填)      | 告警信息, 建议以单引号限定, 否则遇到空格会报错               |
+   | webhoook_token(选填) | 自定义机器人AccessToken, 与脚本参数webhook_token不能同时为空 |
+   | sign_secret(选填)    | 签名校验, 如有签名, 与脚本参数webhook_secret不能同时为空     |
+
 ## 4.2. 应用机器人
 
 ### 4.2.1. 效果
@@ -540,7 +697,7 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
 
 ### 4.2.4. 插件使用
 
-#### 4.2.4.1. 业务插件
+#### 4.2.4.1. Yottaweb插件
 
 1. 使用编辑器打开脚本，根据3.2.3章节获取到的相关信息填入脚本
 
@@ -567,6 +724,29 @@ webhook_key：在企业微信群添加完机器人后会得到一个Webhook地�
    可填入手机号或者邮箱用以推送到指定接收人
 
    ![image-20240416180209077](https://s3.yaourt.cn/img/windows/2024/04/16/202404161802203.png)
+
+#### 4.2.4.3. Soar插件
+
+1. 使用编辑器打开脚本，根据3.2.3章节获取到的相关信息填入脚本
+
+   ![image-20240424104304223](https://s3.yaourt.cn/img/windows/2024/04/24/202404241043336.png)
+
+2. 按照1.4.3章节上传并配置算子
+
+3. 脚本执行说明
+
+   以下是脚本使用样例
+
+   ```shell
+   /opt/rizhiyi/python/bin/python /data/rizhiyi/soar/python/FeishuApplicationSoar.py --alert_name '告警测试' --alert_msg '测试' --mobiles 1111111,222222 --emails xxx@qq.com
+   ```
+
+   | 参数             | 说明                                                  |
+   | ---------------- | ----------------------------------------------------- |
+   | alert_name(必填) | 告警名称, 建议以单引号限定, 否则遇到空格会报错        |
+   | alert_msg(必填)  | 告警信息, 建议以单引号限定, 否则遇到空格会报错        |
+   | mobiles(选填)    | 手机号, 多手机以,(逗号)分割，与emails参数不能同时为空 |
+   | emails(选填)     | 邮箱, 多邮箱以,(逗号)分割，与mobiles参数不能同时为空  |
 
 # 5. 插件获取
 

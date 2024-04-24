@@ -2,7 +2,7 @@
 """
 -------------------------------------------------
    File Name   :     FeishuWebhookManager
-   Description :     
+   Description :     飞书-自定义机器人群消息告警Manager
    Company     :     AlphaBrock
    Author      :     jcciam@outlook.com
    Date        :     2024/4/12

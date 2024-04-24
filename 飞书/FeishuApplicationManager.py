@@ -2,7 +2,7 @@
 """
 -------------------------------------------------
    File Name   :     FeishuApplicationManager
-   Description :     
+   Description :     飞书-应用机器人告警Manager
    Company     :     AlphaBrock
    Author      :     jcciam@outlook.com
    Date        :     2024/4/12
