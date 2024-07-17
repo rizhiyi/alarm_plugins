@@ -16,6 +16,8 @@ from common.plugin_util import convert_config
 
 
 ###########公共参数##############################################
+# 日志平台名称
+sysTitle = "日志平台"
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
 proxies = {
   'http': '',
@@ -89,7 +91,7 @@ def gen_content(alert):
 
 
 def send_message(sendKey, title, SmsMsg, phones):
-    message = "[日志平台Manager]\n" + "告警名称: " + title + '\n' + SmsMsg
+    message = "[{}Manager]\n".format(sysTitle) + "告警名称: " + title + '\n' + SmsMsg
 
     url = url_prefix + "/webhook/send?key={}".format(sendKey)
     header = {

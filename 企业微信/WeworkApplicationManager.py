@@ -15,6 +15,8 @@ import requests
 from common.plugin_util import convert_config
 
 ###########公共参数##############################################
+# 日志平台名称
+sysTitle = "日志平台"
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
 proxies = {
   'http': '',
@@ -168,7 +170,7 @@ def _get_user_id(phones, access_token):
 
 
 def send_message(agentid, user_id, access_token, title, SmsMsg):
-    msg = "[日志平台Manager]\n" + "告警名称:  " + title + '\n' + SmsMsg
+    msg = "[{}Manager]\n".format(sysTitle) + "告警名称:  " + title + '\n' + SmsMsg
 
     url = url_prefix + "/message/send?access_token={}".format(access_token)
     payload = {

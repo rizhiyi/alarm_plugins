@@ -16,6 +16,8 @@ import requests
 from common.plugin_util import convert_config
 
 ###########公共参数##############################################
+# 日志平台名称
+sysTitle = "日志平台"
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
 proxies = {
   'http': '',
@@ -179,7 +181,7 @@ def send_message(AgentId, access_token, userid_list, message, title):
         "msg": {
             "msgtype": "text",
             "text": {
-                "content": "[日志平台Manager]\n" + "告警名称:  " + title + '\n' + message
+                "content": "[{}Manager]\n".format(sysTitle) + "告警名称:  " + title + '\n' + message
             }
         },
         "agent_id": AgentId,

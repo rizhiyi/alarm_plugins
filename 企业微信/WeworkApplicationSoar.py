@@ -19,6 +19,8 @@ import requests
 import urllib3
 
 ###########公共参数##############################################
+# SIEM平台名称
+sysTitle = "SIEM平台"
 # 企业id
 corpid = ""
 # 应用秘钥
@@ -159,7 +161,7 @@ def send_message(alert_name, users, message, access_token):
 
 def main():
     try:
-        message = "[SIEM平台]\n告警名称: " + alert_name + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n" + alert_msg
+        message = "[{}]\n告警名称: ".format(sysTitle) + alert_name + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n" + alert_msg
         logger.info("传入参数...alert_name:{}, alert_msg:{}, users_ids:{}, mobiles:{}".format(alert_name, message, users_ids, mobiles))
 
         msgContexts = split_string_by_bytes(message)

@@ -22,6 +22,8 @@ import requests
 import urllib3
 
 ###########公共参数##############################################
+# SIEM平台名称
+sysTitle = "SIEM平台"
 # 兜底机器人token，监控项未配置则使用该配置项
 webhook_access_token = ""
 # (可选)兜底机器人加签密钥，监控项未配置则使用该配置项
@@ -143,7 +145,7 @@ def send_message(alert_name, message, phones, access_token, secret):
 
 
 def main():
-    message = "[SIEM平台]\n告警名称: " + alert_name + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n" + alert_msg
+    message = "[{}]\n告警名称: ".format(sysTitle) + alert_name + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n" + alert_msg
     logger.info("传入参数...alert_name:{}, alert_msg:{}, mobiles:{}".format(alert_name, message, mobiles))
 
     msgContexts = split_string_by_bytes(message)

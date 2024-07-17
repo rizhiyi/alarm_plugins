@@ -16,6 +16,8 @@ from html import unescape
 from django.template import Context, Template
 
 ###########公共参数##############################################
+# 日志平台名称
+sysTitle = "日志平台"
 # 应用id
 AppId = ""
 # 应用秘钥
@@ -68,7 +70,7 @@ META = {
             }
         },
         {
-            "name": "msg_content",
+            "name": "content_tmpl",
             "alias": "消息内容模板",
             "presence": True,
             "value_type": "template",
@@ -218,8 +220,6 @@ def send_message(tenant_access_token, open_ids: list, alertName, message):
     @param message:
     @return:
     """
-    message = "[日志平台Manager]\n" + "告警名称:  " + alertName + '\n' + message
-
     url = url_prefix + "/im/v1/messages?receive_id_type=open_id"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
@@ -279,7 +279,7 @@ def handle(params, alert):
         elif alert["strategy"]["name"] == "count" and alert["result"].get("hits"):
             contens = []
             for data in alert["result"]["hits"][0:max_result_size]:
-                if data.get("raw_message"):
+                if data.get("raw_message") and data.get("ip") and data.get("hostname"):
                     contens.append("IP地址:" + data.get("ip") + ", 主机名:" + data.get("hostname") + ", 原始日志:" + data.get("raw_message") + "\n")
                 else:
                     tmpData = []
@@ -294,7 +294,7 @@ def handle(params, alert):
 
         if len(extendData) > 0:
             message = message + '\n' + extendData
-    startTitle = "[日志平台]\n告警名称: " + alert["name"] + "\n告警等级: {}".format(alertLevels.get(alert["strategy"]["trigger"].get("level", "low"))) + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n"
+    startTitle = "[{}]\n告警名称: ".format(sysTitle) + alert["name"] + "\n告警等级: {}".format(alertLevels.get(alert["strategy"]["trigger"].get("level", "low"))) + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n"
 
     logger.info("推送内容为:{}".format(startTitle+message))
     msgContexts = split_string_by_bytes(startTitle + message)

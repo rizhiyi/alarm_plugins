@@ -15,6 +15,8 @@ import requests
 from common.plugin_util import convert_config
 
 ###########公共参数##############################################
+# 日志平台名称
+sysTitle = "日志平台"
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
 proxies = {
     'http': '',
@@ -166,7 +168,7 @@ def get_open_id(tenant_access_token, mobiles: list, emails: list):
 
 
 def send_message(tenant_access_token, open_ids: list, title, message):
-    message = "[日志平台Manager]\n" + "告警名称:  " + title + '\n' + message
+    message = "[{}Manager]\n".format(sysTitle) + "告警名称:  " + title + '\n' + message
 
     url = url_prefix + "/im/v1/messages?receive_id_type=open_id"
     headers = {

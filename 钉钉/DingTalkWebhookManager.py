@@ -20,6 +20,8 @@ import urllib.parse
 from common.plugin_util import convert_config
 
 ###########公共参数##############################################
+# 日志平台名称
+sysTitle = "日志平台"
 # 前置http代理, 适用于无法直连互联网, 需要过一层代理，不涉及留空即可
 proxies = {
   'http': '',
@@ -119,7 +121,7 @@ def gen_timestamp_sign(secret):
 
 
 def send_message(secret, access_token, title, message, phones):
-    message = "[日志平台Manager]\n" + "告警名称:  " + title + '\n' + message
+    message = "[{}Manager]\n".format(sysTitle) + "告警名称:  " + title + '\n' + message
 
     if secret:
         timestamp, sign = gen_timestamp_sign(secret)
