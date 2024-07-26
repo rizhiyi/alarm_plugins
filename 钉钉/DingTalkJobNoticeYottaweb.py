@@ -51,7 +51,7 @@ META = {
             "alias": u"接收人手机号",
             "value_type": "string",
             "presence": True,
-            "input_type": "phone",
+            "input_type": "phone_account_group",
             "default_value": "",
             "style": {
                 "rows": 1,

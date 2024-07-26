@@ -74,7 +74,7 @@ META = {
             "presence": False,
             "value_type": "string",
             "default_value": "",
-            "input_type": "phone",
+            "input_type": "phone_account_group",
             "style": {
                 "rows": 1,
                 "cols": 30

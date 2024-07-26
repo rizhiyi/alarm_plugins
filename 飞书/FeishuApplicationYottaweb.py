@@ -50,7 +50,7 @@ META = {
             "alias": "(二选一)用户邮箱",
             "presence": False,
             "value_type": "string",
-            "input_type": "email",
+            "input_type": "email_account_group",
             "default_value": "",
             "style": {
                 "rows": 1,
@@ -62,7 +62,7 @@ META = {
             "alias": "(二选一)手机号",
             "presence": False,
             "value_type": "string",
-            "input_type": "phone",
+            "input_type": "phone_account_group",
             "default_value": "",
             "style": {
                 "rows": 1,

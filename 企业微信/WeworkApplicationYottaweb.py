@@ -52,6 +52,7 @@ META = {
             "alias": "(二选一)用户ID, 多用户ID以,(逗号)分割",
             "presence": False,
             "value_type": "string",
+            "input_type": "account_group",
             "default_value": "",
             "style": {
                 "rows": 1,
@@ -63,7 +64,7 @@ META = {
             "alias": "(二选一)手机号",
             "presence": False,
             "value_type": "string",
-            "input_type": "phone",
+            "input_type": "phone_account_group",
             "default_value": "",
             "style": {
                 "rows": 1,
