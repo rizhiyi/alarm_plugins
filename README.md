@@ -66,7 +66,28 @@ proxies = {
 2. 钉钉
 3. 飞书
 
-具体说明请参阅对应章节
+具体说明请参阅对应章节，以下是针对每种插件文件名的作用描述：
+
+| 序号 | 文件名                       | 类型     | 描述                 |
+| ---- | ---------------------------- | -------- | -------------------- |
+| 1    | DingTalkJobNoticeManager.py  | 钉钉     | manager版本工作通知  |
+| 2    | DingTalkJobNoticeSoar.py     | 钉钉     | soar版本工作通知     |
+| 3    | DingTalkJobNoticeYottaweb.py | 钉钉     | yottaweb版本工作通知 |
+| 4    | DingTalkWebhookManager.py    | 钉钉     | manager版本群消息    |
+| 5    | DingTalkWebhookSoar.py       | 钉钉     | soar版本群消息       |
+| 6    | DingTalkWebhookYottaweb.py   | 钉钉     | yottaweb版本群消息   |
+| 7    | FeishuApplicationManager.py  | 飞书     | manager版本应用消息  |
+| 8    | FeishuApplicationSoar.py     | 飞书     | soar版本应用消息     |
+| 9    | FeishuApplicationYottaweb.py | 飞书     | yottaweb版本应用消息 |
+| 10   | FeishuWebhookManager.py      | 飞书     | manager版本群消息    |
+| 11   | FeishuWebhookSoar.py         | 飞书     | soar版本群消息       |
+| 12   | FeishuWebhookYottaweb.py     | 飞书     | yottaweb版本群消息   |
+| 13   | WeworkApplicationManager.py  | 企业微信 | manager版本应用消息  |
+| 14   | WeworkApplicationSoar.py     | 企业微信 | soar版本应用消息     |
+| 15   | WeworkApplicationYottaweb.py | 企业微信 | yottaweb版本应用消息 |
+| 16   | WeworkWebhookManager.py      | 企业微信 | manager版本群消息    |
+| 17   | WeworkWebhookSoar.py         | 企业微信 | soar版本群消息       |
+| 18   | WeworkWebhookYottaweb.py     | 企业微信 | yottaweb版本群消息   |
 
 ## 1.4. 使用说明
 
