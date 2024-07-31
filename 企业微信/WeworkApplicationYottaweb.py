@@ -175,8 +175,8 @@ def _get_token():
         logger.error("获取Token失败! response: {}".format(resp.text))
     except Exception as ex:
         logger.error("获取Token异常! exception: {}".format(ex))
-    log_and_reply(logging.ERROR, "获取Token异常! exception: {}".format(ex))
-    return None
+        log_and_reply(logging.ERROR, "获取Token异常! exception: {}".format(ex))
+        return None
 
 
 def _get_user_id(phones, access_token):
