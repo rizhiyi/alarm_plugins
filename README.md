@@ -44,7 +44,7 @@ proxies = {
 
 **PS:**   当前企业内部设计http正向代理大部分来自squid提供的服务，少数可能自研，但是涉及客户提供的代理信息一般就只有ip和端口俩项
 
-**特别注意:** <font color="red">不要尝试使用Nginx做代理, 他不能做正向代理的活, 请使用正规正向代理，如：Squid</font>
+**特别注意:** <font color="red">不要尝试使用Nginx做代理, 他不能做正向代理的活, 请使用正规正向代理，如：Squid</font> , 确有需要请参考该偏文档: [配置nginx实现https的代理转发](https://www.yuque.com/qingbaizhinian-xfpz5/ugnify/aa3c9sxqhh0x42xq)
 
 ## 1.3. 插件类型
 
