@@ -296,8 +296,8 @@ def handle(params, alert):
             message = message + '\n' + extendData
     startTitle = "[{}]\n告警名称: ".format(sysTitle) + alert["name"] + "\n告警等级: {}".format(alertLevels.get(alert["strategy"]["trigger"].get("level", "low"))) + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n"
 
-    logger.info("推送内容为:{}".format(startTitle+message))
-    msgContexts = split_string_by_bytes(startTitle + message)
+    logger.info("推送内容为:{}".format(startTitle + unescape(message)))
+    msgContexts = split_string_by_bytes(startTitle + unescape(message))
 
     emails = params.get("configs")[0].get("value").strip(',')
     mobiles = params.get("configs")[1].get("value").strip(',')

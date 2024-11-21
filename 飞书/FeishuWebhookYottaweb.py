@@ -270,8 +270,8 @@ def handle(params, alert):
         if len(extendData) > 0:
             message = message + '\n' + extendData
     startTitle = "[{}]\n告警名称: ".format(sysTitle) + alert["name"] + "\n告警等级: {}".format(alertLevels.get(alert["strategy"]["trigger"].get("level", "low"))) + "\n告警时间: {}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))) + "\n告警内容: 👇\n"
-    logger.info("发送内容为:{}".format(startTitle + message))
-    msgContexts = split_string_by_bytes(startTitle + message)
+    logger.info("发送内容为:{}".format(startTitle + html.unescape(message)))
+    msgContexts = split_string_by_bytes(startTitle + html.unescape(message))
 
     if len(msgContexts) > 5:
         for i in range(0, 5):
