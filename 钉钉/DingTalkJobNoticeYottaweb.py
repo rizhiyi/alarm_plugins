@@ -281,10 +281,14 @@ def handle(params, alert):
                         tmpData.append(key + ": " + str(value))
                     contens.append(", ".join(tmpData))
             message = "\n".join(contens)
-        elif alert["strategy"]["name"] == "spl_query":
+        elif alert["strategy"]["name"] == "spl_query" and alert["result"].get("hits"):
             alert["result"]["hits"] = alert["result"]["hits"][0:10]
             alert["result"]["columns"] = alert["result"]["columns"][0:10]
             message = content(params, alert)
+
+        if message == "":
+            log_and_reply(logging.WARNING, "统计结果为空, 请确认查询条件后重试...")
+            return
 
         if len(extendData) > 0:
             message = message + '\n' + extendData
